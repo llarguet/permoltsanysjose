@@ -1,7 +1,155 @@
-<div style="background-color: black; color: #00FF00; font-family: 'Courier New', monospace; padding: 20px;">
-  <p style="white-space: pre-wrap; font-size: 16px;">
-01000110 01100101 01101100 01101001 01100011 01101001 01100100 01100001 01100100 01100101 01110011 00101100<br>
-00100000 01001010 01101111 01110011 01100101 00101100 00100000 01100111 01110010 01100001 01101110 00100000<br>
-01110011 01100001 01101100 01110100 01100001 01101101 01101111 01101110 01110100 01100101 01110011 00100001
-  </p>
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <title>Per molts anys, Jose</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      font-family: monospace;
+      color: #00FF00;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .terminal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border: 1px solid #00FF00;
+      border-radius: 8px;
+      color: #00FF00;
+      font-size: 1.5rem;
+      width: 80%;
+      max-width: 600px;
+      white-space: pre-wrap;
+      box-shadow: 0 0 20px #00FF00;
+      display: none;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      background-color: #00FF00;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%   { opacity: 1; }
+      50%  { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .countdown {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4rem;
+      color: #00FF00;
+      z-index: 2;
+      animation: blink 0.8s infinite;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="countdown" id="countdown">3</div>
+
+<div class="terminal" id="terminal">
+  <span id="typed"></span><span class="cursor"></span>
 </div>
+
+<!-- So de tecleig (base64, curt i subtil) -->
+<audio id="keySound">
+  <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAADw9PT09PT08PDw8PDw8PDw8PDw8PD08PDw7Oz4+PT09PDw8PDw8PT09PT09PT09PD08PDw8" type="audio/wav">
+</audio>
+
+<script>
+  // MATRIX BACKGROUND
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const letters = '01'.split('');
+  const fontSize = 16;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = Array(columns).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+
+      drops[i]++;
+    }
+  }
+
+  setInterval(drawMatrix, 50);
+
+  // TYPEWRITER TEXT + TECLA
+  const message = `Per molts anys, Jose,\ngran saltamontes,\ndomador de servidors\ni pare de hackers 🖤💾`;
+  const typed = document.getElementById('typed');
+  const terminal = document.getElementById('terminal');
+  const keySound = document.getElementById('keySound');
+
+  let i = 0;
+  function typeWriter() {
+    if (i < message.length) {
+      typed.textContent += message[i];
+      keySound.currentTime = 0;
+      keySound.play();
+      i++;
+      setTimeout(typeWriter, 50);
+    }
+  }
+
+  // COUNTDOWN
+  const countdownEl = document.getElementById('countdown');
+  let count = 3;
+
+  const countdown = setInterval(() => {
+    count--;
+    if (count > 0) {
+      countdownEl.textContent = count;
+    } else {
+      clearInterval(countdown);
+      countdownEl.style.display = 'none';
+      terminal.style.display = 'block';
+      typeWriter();
+    }
+  }, 1000);
+
+  // RESIZE
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
+
+</body>
+</html>
