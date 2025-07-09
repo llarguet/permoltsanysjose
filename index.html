@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8">
-  <title>Per molts anys, Jose</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Felicitació per a Jose</title>
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
       background: black;
       overflow: hidden;
       font-family: monospace;
@@ -21,20 +23,11 @@
 
     .terminal {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1;
-      padding: 20px;
-      background-color: rgba(0, 0, 0, 0.6);
-      border: 1px solid #00FF00;
-      border-radius: 8px;
-      color: #00FF00;
+      top: 20%;
+      left: 5%;
+      white-space: pre-line;
       font-size: 1.5rem;
-      width: 80%;
-      max-width: 600px;
-      white-space: pre-wrap;
-      box-shadow: 0 0 20px #00FF00;
+      z-index: 2;
       display: none;
     }
 
@@ -42,13 +35,11 @@
       display: inline-block;
       width: 10px;
       background-color: #00FF00;
-      animation: blink 1s infinite;
+      animation: blink 1s step-start infinite;
     }
 
     @keyframes blink {
-      0%   { opacity: 1; }
-      50%  { opacity: 0; }
-      100% { opacity: 1; }
+      50% { opacity: 0; }
     }
 
     .countdown {
@@ -56,10 +47,25 @@
       top: 40%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 4rem;
-      color: #00FF00;
+      font-size: 5rem;
       z-index: 2;
-      animation: blink 0.8s infinite;
+    }
+
+    #startScreen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: #00FF00;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border: 2px solid #00FF00;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 3;
+      font-family: monospace;
+      animation: blink 1s infinite;
     }
   </style>
 </head>
@@ -67,19 +73,20 @@
 
 <canvas id="matrix"></canvas>
 
-<div class="countdown" id="countdown">3</div>
+<div class="countdown" id="countdown" style="display: none;">3</div>
 
 <div class="terminal" id="terminal">
   <span id="typed"></span><span class="cursor"></span>
 </div>
 
-<!-- So de tecleig (base64, curt i subtil) -->
+<div id="startScreen">▶ Fes clic per començar</div>
+
 <audio id="keySound">
   <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAADw9PT09PT08PDw8PDw8PDw8PDw8PD08PDw7Oz4+PT09PDw8PDw8PT09PT09PT09PD08PDw8" type="audio/wav">
 </audio>
 
 <script>
-  // MATRIX BACKGROUND
+  // Matrix
   const canvas = document.getElementById('matrix');
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
@@ -93,25 +100,20 @@
   function drawMatrix() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     ctx.fillStyle = '#0F0';
     ctx.font = fontSize + 'px monospace';
 
     for (let i = 0; i < drops.length; i++) {
       const text = letters[Math.floor(Math.random() * letters.length)];
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
     }
   }
 
   setInterval(drawMatrix, 50);
 
-  // TYPEWRITER TEXT + TECLA
+  // Missatge + so
   const message = `Per molts anys, Jose,\ngran saltamontes,\ndomador de servidors\ni pare de hackers 🖤💾`;
   const typed = document.getElementById('typed');
   const terminal = document.getElementById('terminal');
@@ -128,28 +130,37 @@
     }
   }
 
-  // COUNTDOWN
+  // Compte enrere
   const countdownEl = document.getElementById('countdown');
   let count = 3;
 
-  const countdown = setInterval(() => {
-    count--;
-    if (count > 0) {
-      countdownEl.textContent = count;
-    } else {
-      clearInterval(countdown);
-      countdownEl.style.display = 'none';
-      terminal.style.display = 'block';
-      typeWriter();
-    }
-  }, 1000);
+  function startCountdown() {
+    countdownEl.style.display = 'block';
+    const countdown = setInterval(() => {
+      count--;
+      if (count > 0) {
+        countdownEl.textContent = count;
+      } else {
+        clearInterval(countdown);
+        countdownEl.style.display = 'none';
+        terminal.style.display = 'block';
+        typeWriter();
+      }
+    }, 1000);
+  }
 
-  // RESIZE
+  // Inici amb clic
+  document.getElementById('startScreen').addEventListener('click', () => {
+    document.getElementById('startScreen').style.display = 'none';
+    keySound.play(); // desbloqueja l'àudio
+    startCountdown();
+  });
+
+  // Redimensionament
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
 </script>
-
 </body>
 </html>
