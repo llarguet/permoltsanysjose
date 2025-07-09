@@ -23,12 +23,21 @@
 
     .terminal {
       position: absolute;
-      top: 20%;
-      left: 5%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       white-space: pre-line;
-      font-size: 1.5rem;
+      font-size: 1.8rem;
+      color: #00FF00;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 30px 40px;
+      border: 2px solid #00FF00;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00FF00;
       z-index: 2;
       display: none;
+      text-align: center;
+      line-height: 1.6;
     }
 
     .cursor {
@@ -52,20 +61,22 @@
     }
 
     #startScreen {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 2rem;
       color: #00FF00;
       background: rgba(0, 0, 0, 0.8);
-      padding: 20px;
+      padding: 20px 40px;
       border: 2px solid #00FF00;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       z-index: 3;
       font-family: monospace;
-      animation: blink 1s infinite;
+      text-align: center;
+      animation: blink 1.2s infinite;
+      box-shadow: 0 0 20px #00FF00;
     }
   </style>
 </head>
@@ -79,7 +90,7 @@
   <span id="typed"></span><span class="cursor"></span>
 </div>
 
-<div id="startScreen">▶ Fes clic per a començar</div>
+<div id="startScreen">▶ Fes clic per començar</div>
 
 <audio id="keySound">
   <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAADw9PT09PT08PDw8PDw8PDw8PDw8PD08PDw7Oz4+PT09PDw8PDw8PT09PT09PT09PD08PDw8" type="audio/wav">
